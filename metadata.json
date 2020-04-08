@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "shell-version": ["3.28.4"],
+  "uuid": "currency-rate@manti.by.gmail.com",
+  "name": "Currency Rate",
+  "url": "https://github.com/manti-by/currency-rate",
+  "description": "This extension puts an exchange rate for pair BYN/USD to the center gnome panel"
+}

@@ -1,8 +1,0 @@
-{
-  "version": 1,
-  "shell-version": ["3.28.4"],
-  "uuid": "currency-exchange@manti.by.gmail.com",
-  "name": "Currency Exchange Widget",
-  "url": "https://github.com/manti-by/gnome-currency-exchange-widget",
-  "description": "This extension puts an exchange rate for pair BYN/USD to center gnome panel"
-}
