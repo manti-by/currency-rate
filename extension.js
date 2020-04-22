@@ -9,10 +9,13 @@ const EXT_UUID = 'currency-rate@manti.by.gmail.com';
 let layout, button, label;
 
 function update() {
-  let data = GLib.spawn_command_line_sync('/usr/bin/python3 ' + EXT_PATH + EXT_UUID + '/data.py')[1].toString(),
+  let data = GLib.spawn_command_line_sync('python3 -m app.worker')[1].toString(),
       rates = JSON.parse(data);
 
-  label.set_text('$ ' + ((rates.usd_buy + rates.usd_sell) / 2).toFixed(2));
+  let value = ((rates.usd_buy + rates.usd_sell) / 2).toFixed(2),
+      trend = rates.usd_buy_trend + rates.usd_sell_trend > 0 ? '↑' : '↓';
+
+  label.set_text('$ ' + value + trend);
   Mainloop.timeout_add_seconds(60 * 60, update);
 }
 
