@@ -18,21 +18,27 @@ if __name__ == '__main__':
         for child in ET.fromstring(response.content):
             if child.attrib.get('id') == '168,768,968,868':
                 for currency in child.findall('currency'):
+                    code = currency.find('code').text
+                    code_to = currency.find('codeTo').text
+
+                    print('.')
                     if (
-                        currency.find('code').text == 'BYN'
-                        and currency.find('codeTo').text == 'USD'
+                        (code == 'BYN' and code_to == 'USD') or
+                        (code == 'USD' and code_to == 'BYN')
                     ):
                         data['usd_buy'] = float(currency.find('purchase').text)
-                        data['usd_sell'] = usd_sell = float(currency.find('sale').text)
+                        data['usd_sell'] = float(currency.find('sale').text)
+
                     if (
-                        currency.find('code').text == 'BYN'
-                        and currency.find('codeTo').text == 'EUR'
+                        (code == 'BYN' and code_to == 'EUR') or
+                        (code == 'EUR' and code_to == 'BYN')
                     ):
                         data['eur_buy'] = float(currency.find('purchase').text)
                         data['eur_sell'] = float(currency.find('sale').text)
+
                     if (
-                        currency.find('code').text == 'BYN'
-                        and currency.find('codeTo').text == 'RUB'
+                        (code == 'BYN' and code_to == 'RUB') or
+                        (code == 'RUB' and code_to == 'BYN')
                     ):
                         data['rur_buy'] = float(currency.find('purchase').text)
                         data['rur_sell'] = float(currency.find('sale').text)

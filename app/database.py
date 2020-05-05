@@ -9,7 +9,7 @@ def get_data() -> dict:
         cursor = session.cursor()
         cursor.execute(
             "SELECT usd_buy, usd_sell, eur_buy, eur_sell, rur_buy, rur_sell, datetime "
-            "FROM exchange_rates ORDER BY datetime LIMIT ?",
+            "FROM exchange_rates ORDER BY datetime DESC LIMIT ?",
             (TRENDING_COUNT, ),
         )
         session.commit()
