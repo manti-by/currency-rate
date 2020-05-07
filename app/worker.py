@@ -21,7 +21,6 @@ if __name__ == '__main__':
                     code = currency.find('code').text
                     code_to = currency.find('codeTo').text
 
-                    print('.')
                     if (
                         (code == 'BYN' and code_to == 'USD') or
                         (code == 'USD' and code_to == 'BYN')

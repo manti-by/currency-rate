@@ -7,34 +7,44 @@ def get_data() -> dict:
     with sqlite3.connect(DB_PATH) as session:
         session.row_factory = sqlite3.Row
         cursor = session.cursor()
-        cursor.execute(
-            "SELECT usd_buy, usd_sell, eur_buy, eur_sell, rur_buy, rur_sell, datetime "
-            "FROM exchange_rates ORDER BY datetime DESC LIMIT ?",
-            (TRENDING_COUNT, ),
-        )
+
+        cursor.execute("""
+            SELECT
+              (AVG(usd_buy) + AVG(usd_sell)) / 2 as usd,
+              (AVG(eur_buy) + AVG(eur_sell)) / 2 as eur,
+              (AVG(rur_buy) + AVG(rur_sell)) / 2 as rur,
+              date(datetime) as date
+            FROM exchange_rates
+            WHERE date(datetime) = date('now', '-1 day')
+            ORDER BY datetime DESC;
+        """)
         session.commit()
 
-        # Calculating trends for exchange rates
-        data = {
-            'usd_buy': 0,
-            'usd_sell': 0,
-            'eur_buy': 0,
-            'eur_sell': 0,
-            'rur_buy': 0,
-            'rur_sell': 0,
-        }
-        for item in cursor.fetchall():
-            for key in data:
-                data[key] += item[key]
+        yesterday = dict(zip(
+            [c[0] for c in cursor.description], cursor.fetchone()
+        ))
 
-        return_data = dict(zip([c[0] for c in cursor.description], item))
+        cursor.execute("""
+            SELECT
+              (AVG(usd_buy) + AVG(usd_sell)) / 2 as usd,
+              (AVG(eur_buy) + AVG(eur_sell)) / 2 as eur,
+              (AVG(rur_buy) + AVG(rur_sell)) / 2 as rur,
+              date(datetime) as date
+            FROM exchange_rates
+            WHERE date(datetime) = date('now')
+            ORDER BY datetime DESC;
+        """)
+        session.commit()
 
-        for key in data:
-            return_data['{}_trend'.format(key)] = round(
-                return_data[key] - data[key] / TRENDING_COUNT, 2
-            )
+        today = dict(zip(
+            [c[0] for c in cursor.description], cursor.fetchone()
+        ))
 
-        return return_data
+        today['usd_trend'] = today['usd'] - yesterday['usd']
+        today['eur_trend'] = today['eur'] - yesterday['eur']
+        today['rur_trend'] = today['rur'] - yesterday['rur']
+
+        return today
 
 
 def save_data(data: dict):
