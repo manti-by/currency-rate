@@ -1,6 +1,6 @@
 import sqlite3
 
-from app import DB_PATH, TRENDING_COUNT
+from app import DB_PATH
 
 
 def get_data() -> dict:
@@ -9,15 +9,25 @@ def get_data() -> dict:
         cursor = session.cursor()
 
         cursor.execute("""
+            SELECT datetime
+            FROM exchange_rates
+            WHERE date(datetime) < date('now', '-1 day')
+            ORDER BY datetime DESC;
+        """)
+        session.commit()
+
+        previous_day = cursor.fetchone()[0]
+
+        cursor.execute("""
             SELECT
               (AVG(usd_buy) + AVG(usd_sell)) / 2 as usd,
               (AVG(eur_buy) + AVG(eur_sell)) / 2 as eur,
               (AVG(rur_buy) + AVG(rur_sell)) / 2 as rur,
               date(datetime) as date
             FROM exchange_rates
-            WHERE date(datetime) = date('now', '-1 day')
+            WHERE date(datetime) < ?
             ORDER BY datetime DESC;
-        """)
+        """, (previous_day,))
         session.commit()
 
         yesterday = dict(zip(
