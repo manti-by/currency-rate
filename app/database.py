@@ -67,3 +67,4 @@ def save_data(data: dict):
              data['eur_sell'], data['rur_buy'], data['rur_sell']),
         )
         connection.commit()
+
